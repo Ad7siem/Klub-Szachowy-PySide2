@@ -1,0 +1,275 @@
+{
+	"QMainWindow":[
+		{
+			"tittle":"Klub Szachowy",
+			"icon":":/images/Logo klub.ico",
+			"frameless": true,
+			"transluscentBg": true,
+			"sizeGrip": "sizeGrip",
+			"navigation":[
+				{
+					"minimize":"minimizeBtn",
+					"close": "closeBtn",
+					"restore":[
+						{	
+							"buttonName": "restoreBtn",
+							"normalIcon": ":/icons/icons/square.svg",
+							"maximizedIcon": ":/icons/icons/copy.svg"
+						}
+					],
+					"moveWindow": "headerContainer",
+					"tittleBar": "headerContainer"
+				}
+			]
+		}
+	],
+	"QCustomSlideMenu": [
+		{
+			"name": "leftMenuContainer",
+			"defaultSize": [{
+				"width": 47,
+				"height": "parent"
+			}],
+			"collapsedSize": [{
+				"width": 47,
+				"height": "parent"
+			}],
+			"expandedSize": [{
+				"width": 125,
+				"height": "parent"
+			}],
+			"toggleButton": [{
+				"buttonName": "menuBtn",
+				"icons": [{
+					"whenMenuIsCollapsed": ":/icons/icons/align-center.svg",
+					"whenMenuIsExpanded": ":/icons/icons/chevron-left.svg"
+				}]
+			}],
+			"menuTransitionAnimation": [{
+				"animationDuration": 200,
+				"animationEasingCurve": "Linear"
+			}]
+		},
+		{
+			"name": "centerMenuContainer",
+			"defaultSize": [{
+				"width": 0,
+				"height": "parent"
+			}],
+			"collapsedSize": [{
+				"width": 0,
+				"height": "parent"
+			}],
+			"expandedSize": [{
+				"width": 400,
+				"height": "parent"
+			}],
+			"menuTransitionAnimation": [{
+				"animationDuration": 200,
+				"animationEasingCurve": "Linear"
+			}]
+		},
+		{
+			"name": "rightMenuContainer",
+			"defaultSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"collapsedSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"expandedSize": [{
+				"width": 200,
+				"height": "auto"
+			}],
+			"menuTransitionAnimation": [{
+				"animationDuration": 200,
+				"animationEasingCurve": "Linear"
+			}]
+		},
+		{
+			"name": "popupNotificationContainer",
+			"defaultSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"collapsedSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"expandedSize": [{
+				"width": 500,
+				"height": 100
+			}],
+			"menuTransitionAnimation": [{
+				"animationDuration": 200,
+				"animationEasingCurve": "Linear"
+			}],
+			"floatPosition": [
+				{
+					"relativeTo": "centralwidget",
+					"position": "center-center",
+					"shadow":[
+						{
+							"color": "#000",
+							"blurRadius": 20,
+							"xOffset": 0,
+							"yOffset": 0
+						}
+					]
+				}
+			],
+			"toggleButton": [{
+				"buttonName": "notificationBtn"
+			}]
+		},
+		{
+			"name": "popupNotificationContainer",
+			"defaultSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"collapsedSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"expandedSize": [{
+				"width": 500,
+				"height": 100
+			}],
+			"menuTransitionAnimation": [{
+				"animationDuration": 200,
+				"animationEasingCurve": "Linear"
+			}],
+			"floatPosition": [
+				{
+					"relativeTo": "centralwidget",
+					"position": "center-center",
+					"shadow":[
+						{
+							"color": "#000",
+							"blurRadius": 20,
+							"xOffset": 0,
+							"yOffset": 0
+						}
+					]
+				}
+			],
+			"toggleButton": [{
+				"buttonName": "saveGame"
+			}]
+		},
+		{
+			"name": "popupNotificationContainer",
+			"defaultSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"collapsedSize": [{
+				"width": 0,
+				"height": "auto"
+			}],
+			"expandedSize": [{
+				"width": 500,
+				"height": 100
+			}],
+			"menuTransitionAnimation": [{
+				"animationDuration": 200,
+				"animationEasingCurve": "Linear"
+			}],
+			"floatPosition": [
+				{
+					"relativeTo": "centralwidget",
+					"position": "center-center",
+					"shadow":[
+						{
+							"color": "#000",
+							"blurRadius": 20,
+							"xOffset": 0,
+							"yOffset": 0
+						}
+					]
+				}
+			],
+			"toggleButton": [{
+				"buttonName": "saveSettings"
+			}]
+		}
+	],
+	"QStackedWidget":[
+		{
+			"name":"mainPages",
+			"navigation":[
+				{
+					"navigationButtons":[
+						{
+							"homeBtn": "page_6",
+							"dataBtn": "page_7",
+							"reportsBtn": "page_8"
+						}
+					]
+				}
+			]
+	
+		},
+		{
+			"name":"centerMenuPages",
+			"navigation":[
+				{
+					"navigationButtons":[
+						{
+							"settingBtn": "page",
+							"informationBtn": "page_2",
+							"helpBtn": "page_3"
+						}
+					]
+				}
+			]
+	
+		},
+		{
+			"name":"rightMenuPages",
+			"navigation":[
+				{
+					"navigationButtons":[
+						{
+							"moreMenuBtn": "page_5",
+							"profileManuBtn": "page_4",
+							"searchBtn": "page_10"
+						}
+					]
+				}
+			]
+	
+		}
+	],
+	"QPushButtonGroup": [
+		{
+			"Buttons": [
+				"homeBtn",
+				"dataBtn",
+				"reportsBtn"
+			],
+			"Style":[
+				{
+					"Active": "background-color: #acacac;",
+					"NotActive": ""
+				}
+			]
+		},
+		{
+			"Buttons": [
+				"settingBtn",
+				"informationBtn",
+				"helpBtn"
+			],
+			"Style":[
+				{
+					"Active": "background-color: #4f4f4f;",
+					"NotActive": ""
+				}
+			]
+		}
+	]
+}
