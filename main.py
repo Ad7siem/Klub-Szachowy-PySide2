@@ -2,9 +2,44 @@ from interface import *
 from configparser import ConfigParser
 import os, sys
 import gspread
+import sqlite3
 
 from Custom_Widgets.Widgets import *
 
+conn = sqlite3.connect('listGames.db')
+c = conn.cursor()
+
+c.execute("""CREATE TABLE if not exists list_games(
+	lp text,
+	name_game text,
+	type text,
+	min_players text,
+	max_players text,
+	time_game text,
+	owner text)
+	""")
+
+c.execute("""CREATE TABLE if not exists list_winners(
+	position text,
+	name_player text,
+	points text)
+	""")
+c.execute("""CREATE TABLE if not exists list_gold_plate(
+	position text,
+	name_player text,
+	percentage_of_losers text)
+	""")
+c.execute("""CREATE TABLE if not exists list_players(
+	name_player text,
+	id int)
+	""")
+c.execute("""CREATE TABLE if not exists list_games_id(
+	name_game text,
+	id int)
+	""")
+
+conn.commit()
+conn.close()
 
 class MainWindow(QMainWindow):
 	def __init__(self, parent=None):
@@ -44,6 +79,7 @@ class MainWindow(QMainWindow):
 		self.ui.moreMenuBtn.clicked.connect(lambda: self.ui.rightMenuContainer.expandMenu())
 		self.ui.profileManuBtn.clicked.connect(lambda: self.ui.rightMenuContainer.expandMenu())
 		self.ui.searchBtn.clicked.connect(lambda: self.ui.rightMenuContainer.expandMenu())
+		self.ui.addPlayer.clicked.connect(lambda: self.ui.rightMenuContainer.expandMenu())
 
 		# CLOSE RIGHT MENU WIDGET 
 		self.ui.closeRightBtn.clicked.connect(lambda: self.ui.rightMenuContainer.collapseMenu())
@@ -64,9 +100,6 @@ class MainWindow(QMainWindow):
 		self.timeGame = self.findChild(QLineEdit, 'timeGame')
 		self.owner = self.findChild(QLineEdit, 'owner')
 
-		typeGameList = ["Podstawka", "Dodatek"]
-		self.typeGame.addItems(typeGameList)
-
 		# Widget Notification
 		self.notificationBtn = self.findChild(QPushButton, 'notificationBtn')
 		self.infoNotification = self.findChild(QLabel, 'infoNotification')
@@ -79,7 +112,64 @@ class MainWindow(QMainWindow):
 		self.resultsDay = self.findChild(QLineEdit, 'resultsDay')
 		self.tableWinners = self.findChild(QLineEdit, 'tableWinners')
 		self.urlBordGamesSheet = self.findChild(QLineEdit, 'urlBordGamesSheet')
-		self.urlStatisticSheet = self.findChild(QLineEdit, 'urlStatisticSheet')		
+		self.urlStatisticSheet = self.findChild(QLineEdit, 'urlStatisticSheet')	
+
+		# Add Results	
+		self.addPlayerBtn = self.findChild(QPushButton, 'addPlayer')
+		self.nextPlayerBtn = self.findChild(QPushButton, 'nextPlayer')
+		self.nameGameAdd = self.findChild(QComboBox, 'nameGameAdd')
+		self.numberGame = self.findChild(QLineEdit, 'numberGame')
+		self.valuePlayer = self.findChild(QLineEdit, 'valuePlayer')
+		self.dateEdit = self.findChild(QDateEdit, 'dateEdit')
+		self.namePlayer = self.findChild(QComboBox, 'namePlayer')
+		self.results = self.findChild(QComboBox, 'results')
+		self.points = self.findChild(QLineEdit, 'points')
+		self.position = self.findChild(QLineEdit, 'position')
+
+		##############################################################################################
+		################################### BUILDING LIST COMBOBOX ###################################
+		##############################################################################################
+		# Combobox Type Game
+		typeGameList = ["Podstawka", "Dodatek"]
+		self.typeGame.addItems(typeGameList)
+
+		# Combobox Types of Results
+		resultsList = ["Zwyciężca", "Przegrany", "Zmywacz"]
+		self.results.addItems(resultsList)
+
+		# Open Database and bulding records from list players and list games
+		conn = sqlite3.connect('listGames.db')
+		c = conn.cursor()
+
+		c.execute("SELECT * FROM list_players")
+		records_players_list_db = c.fetchall()
+
+		c.execute("SELECT * FROM list_games_id")
+		records_games_list_db = c.fetchall()
+
+		conn.commit()
+		conn.close()
+
+		# Combobox List Games
+		nameGameAddList = []
+		for record in records_games_list_db[1:]:
+			# print(record[0])
+			nameGameAddList.append(record[0])
+		self.nameGameAdd.addItems(nameGameAddList)
+
+		# Combobox List Players
+		namePlayerList = []
+		for record in records_players_list_db[1:]:
+			# print(record[0])
+			namePlayerList.append(record[0])
+		self.namePlayer.addItems(namePlayerList)
+
+		##############################################################################################
+		########################################## ADD RESULTS #######################################
+		##############################################################################################
+		self.addPlayerBtn.clicked.connect(self.addPlayers)
+		self.nextPlayerBtn.clicked.connect(self.nextPlayers)
+
 
 		##############################################################################################
 		###################################### SHOW LABEL SETTINGS ###################################
@@ -101,9 +191,7 @@ class MainWindow(QMainWindow):
 		###################################### ADD BOARD GAMES #######################################
 		##############################################################################################
 		self.saveGameBtn = self.findChild(QPushButton, 'saveGame')
-		# self.NotificationBtn = self.findChild(QPushButton, 'NotificationBtn')
 		self.saveGameBtn.clicked.connect(self.saveGame)
-		# self.saveGameBtn.clicked.connect(self.NotificationBtn)
 
 		##############################################################################################
 		######################################### DATA UPDATE ########################################
@@ -113,17 +201,23 @@ class MainWindow(QMainWindow):
 		##############################################################################################
 		###################################### CONNECT TO GOOGLE #####################################
 		##############################################################################################
+
+		### 					In case of problems loading from the database file  			   ###
+
+		"""
 		# Retrieve data
 		self.worksheet_game = self.openSheet("Gry", self.sheet_file_boardgames)
 		res = self.worksheet_game.get_all_values()
 		print(res)
 
-		# Extract row values from the object
+		Extract row values from the object
+		
 		for x in range(len(res)):
 			# print(res[x])
 			if x > 0:
 				# print(res[x][1:7])
 				self.insertNewGameTableRow(res[x][1:7])
+		
 
 		self.worksheet_results = self.openSheet("Wyniki", self.sheet_file_results)
 		res = self.worksheet_results.get_all_values()
@@ -137,10 +231,46 @@ class MainWindow(QMainWindow):
 			if x > 2:
 				# print(res[x][5:8])
 				self.insertNewGoldPlateTableRow(res[x][5:8])
+		"""
+		##############################################################################################
+		########################### BUILDING A TABLE FROM A DATABASE FILE ############################
+		##############################################################################################
+		# Open Database
+		conn = sqlite3.connect('listGames.db')
+		c = conn.cursor()
 
+		# Show List All Games From Database
+		c.execute("SELECT * FROM list_games")
+		records = c.fetchall()
+
+		for x in range(len(records)):
+			if x > 0:
+				# print(records[x])
+				self.insertNewGameTableRow(records[x][1:7])
+
+		# Show List Player Winners From Database
+		c.execute("SELECT * FROM list_winners")
+		records = c.fetchall()
+
+		for record in records[3:]:
+			# if x > 2:
+				# print(records[x])
+			self.insertNewWinnerTableRow(record)
+
+		# Show List Players Lossers From Database
+		c.execute("SELECT * FROM list_gold_plate")
+		records = c.fetchall()
+
+		for record in records[3:]:
+			if x > 2:
+				self.insertNewGoldPlateTableRow(record)
+
+		# Close Database
+		conn.commit()
+		conn.close()
 
 		##############################################################################################
-		##################################### SETTINGS GAME TABLET ###################################
+		#################################### SETTINGS GAMES TABLET ###################################
 		##############################################################################################
 		self.gameTablet = self.findChild(QTableWidget, 'gameTablet')
 		self.gameTablet.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
@@ -148,7 +278,10 @@ class MainWindow(QMainWindow):
 
 		##############################################################################################
 
+	##############################################################################################
 	# A FUNCTION TO INSERT NEW TABLE ROWS
+	##############################################################################################
+	# Table Winners
 	def insertNewWinnerTableRow(self, items):
 		# Create New row
 		rowPosition = self.ui.winnerTable.rowCount()
@@ -164,7 +297,7 @@ class MainWindow(QMainWindow):
 			# print(qtablewidgetitem)
 			qtablewidgetitem.setText(str(items[x]))
 
-
+	# Table Losers
 	def insertNewGoldPlateTableRow(self, items):
 		# Create New row
 		rowPosition = self.ui.goldPlateTable.rowCount()
@@ -181,7 +314,7 @@ class MainWindow(QMainWindow):
 			# print(qtablewidgetitem)
 			qtablewidgetitem.setText(str(items[x]))
 
-
+	# Table All Games All Players
 	def insertNewGameTableRow(self, items):
 		# Create New row
 		rowPosition = self.ui.gameTablet.rowCount()
@@ -198,10 +331,13 @@ class MainWindow(QMainWindow):
 			# Add item
 			qtablewidgetitem = self.ui.gameTablet.item(rowPosition, x)
 			# print(qtablewidgetitem)
+			if qtablewidgetitem == None:
+				continue
 			qtablewidgetitem.setText(str(items[x]))
 
-
+	##############################################################################################
 	# A FUNCTION OPEN SHEET
+	##############################################################################################
 	def openSheet(self, name_sheet, url_sheet):
 		# Json File Key
 		gc = gspread.service_account(filename='credentials.json')
@@ -211,8 +347,9 @@ class MainWindow(QMainWindow):
 		worksheet = sh.worksheet(name_sheet)
 		return worksheet
 
-
+	##############################################################################################
 	# A FUNCTION SAVE GAME IN GOOGLE SHEET
+	##############################################################################################
 	def saveGame(self):
 		if self.typeGame.currentText() == "Podstawka":
 			typeG = 'P'
@@ -234,8 +371,9 @@ class MainWindow(QMainWindow):
 		self.worksheet_game.append_row(newGame)
 		self.infoNotification.setText(f'Gra "{self.nameGame.text()}" została zapisana!')
 
-
+	##############################################################################################
 	# A FUNCTION SAVE SATTINGS APP
+	##############################################################################################
 	def saveSettings(self):
 		parser = ConfigParser()
 		parser.read('main.ini')
@@ -253,10 +391,143 @@ class MainWindow(QMainWindow):
 
 		self.infoNotification.setText('Zapisano ustawienia!')
 
-
+	##############################################################################################
+	# FUNCTION UPDATING THE DATABASE FROM GOOGLE SHEET
+	##############################################################################################
 	def dataUpdate(self):
 		self.infoNotification.setText('Zaaktualizowano bazę danych')
 
+		### Downloading data from google sheet ###
+		worksheet_game = self.openSheet(self.sheet_all_boardgames, self.sheet_file_boardgames)
+		records_games = worksheet_game.get_all_values()
+		# print(records_games)
+
+		worksheet_results = self.openSheet(self.sheet_table_winners, self.sheet_file_results)
+		records_table_winners = worksheet_results.get_all_values()
+		# print(records_table_winners)
+
+		worksheet_players_list = self.openSheet(self.sheet_players , self.sheet_file_results)
+		records_players_list = worksheet_players_list.get_all_values()
+		# print(records_players_list)
+
+		worksheet_games_id = self.openSheet(self.sheet_boardgames, self.sheet_file_results)
+		records_games_list = worksheet_games_id.get_all_values()
+		######
+
+		### Open Database ###
+		conn = sqlite3.connect('listGames.db')
+		c = conn.cursor()
+
+		# Deleting date from the database
+		c.execute("DELETE FROM list_games;")
+		c.execute("DELETE FROM list_winners;")
+		c.execute("DELETE FROM list_gold_plate;")
+		c.execute("DELETE FROM list_players;")
+
+		# Saving data to list_games in a database
+		for record in records_games:
+			# print(record)
+			# print(res[r][0:7])
+			temporary_lp = record[0]
+			temporary_name_game = record[1]
+			temporary_type = record[2]
+			temporary_min_players = record[3]
+			temporary_max_players = record[4]
+			temporary_time_game = record[5]
+			temporary_owner = record[6]
+			c.execute("INSERT INTO list_games VALUES (:lp, :name_game, :type, :min_players, :max_players, :time_game, :owner)",
+				{
+					'lp': temporary_lp,
+					'name_game': temporary_name_game,
+					'type': temporary_type,
+					'min_players': temporary_min_players,
+					'max_players': temporary_max_players,
+					'time_game': temporary_time_game,
+					'owner': temporary_owner,
+				})
+
+		# Saving data to list_winners in a database
+		for record in records_table_winners:
+			temporary_position_winners = record[1]
+			temporary_name_player_winners = record[2]
+			temporary_points = record[3]
+			temporary_position_plate = record[5]
+			temporary_name_player_plate = record[6]
+			temporary_losers = record[7]
+			c.execute("INSERT INTO list_winners VALUES(:position, :name_player, :points)",
+				{
+					'position': temporary_position_winners,
+					'name_player': temporary_name_player_winners,
+					'points': temporary_points
+				})
+			c.execute("INSERT INTO list_gold_plate VALUES(:position, :name_player, :percentage_of_losers)",
+				{
+					'position': temporary_position_plate,
+					'name_player': temporary_name_player_plate,
+					'percentage_of_losers': temporary_losers
+				})
+		
+		# Saving data to list_players in a database
+		for record in records_players_list:
+			temporary_player = record[0]
+			temporary_id = record[2]
+			c.execute("INSERT INTO list_players VALUES(:name_player, :id)",
+				{
+					'name_player': temporary_player,
+					'id': temporary_id
+				})
+
+		# Saving data to list_games_id in a database
+		for record in records_games_list:
+			temporary_name_game = record[0]
+			temporary_id = record[1]
+			c.execute("INSERT INTO list_games_id VALUES(:name_game, :id)",
+				{
+					'name_game': temporary_name_game,
+					'id': temporary_id
+				})
+
+		# c.execute("SELECT * FROM list_players")
+		# self.records = c.fetchall()
+
+		# Close Database
+		conn.commit()
+		conn.close()
+
+		# for record in records:
+		# 	print(record)
+
+
+	##############################################################################################
+	# 
+	##############################################################################################
+	def addPlayers(self):
+		pass
+
+	##############################################################################################
+	# 
+	##############################################################################################
+	def nextPlayers(self):
+		temporary = []
+
+		print(self.dateEdit.text())
+		# print(self.nameGameAdd.text())
+		print(self.numberGame.text())
+		print(self.valuePlayer.text())
+		# print(self.namePlayer.text())
+		# print(self.results.text())
+		print(self.points.text())
+		print(self.position.text())
+		# self.nameGameAdd 
+		# self.numberGame 
+		# self.valuePlayer 
+		# self.dateEdit 
+		# self.namePlayer 
+		# self.results
+		# self.points 
+		# self.position 
+
+	##############################################################################################
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)

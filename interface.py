@@ -66,7 +66,7 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "#listAllGames, #listGames, #playersSheet, #resultsDay, #t"
-                        "ableWinners, #urlBordGamesSheet, #urlStatisticSheet, #search{\n"
+                        "ableWinners, #urlBordGamesSheet, #urlStatisticSheet, #search, #dateEdit, #nameGameAdd, #numberGame, #valuePlayer, #namePlayer, #points, #position, #results{\n"
 "	background-color:#303030;\n"
 "	border: 1px;\n"
 "	border-radius: 2px;\n"
@@ -74,13 +74,18 @@ class Ui_MainWindow(object):
 "	border-style: outset;\n"
 "}\n"
 "\n"
-"#saveGame, #saveSettings, #searchItem{\n"
+"#saveGame, #saveSettings, #searchItem, #addPlayer, #nextPlayer{\n"
 "	background-color: rgb(94, 94, 94);\n"
 "\n"
 "	border-radius: 5px;\n"
 "	border-width: 1px;\n"
 "	border-color: #969696;\n"
 "	border-style: outset;\n"
+"}\n"
+"\n"
+"#titleListGames, #titleResults, #titleAddResults, #frame_11, #frame_12, #frame_13{\n"
+"	background-color: #969696;\n"
+"	border-radius: 5px;\n"
 "}\n"
 "")
         self.centralwidget = QWidget(MainWindow)
@@ -608,13 +613,13 @@ class Ui_MainWindow(object):
         self.page_6.setObjectName(u"page_6")
         self.verticalLayout_15 = QVBoxLayout(self.page_6)
         self.verticalLayout_15.setObjectName(u"verticalLayout_15")
-        self.frame_18 = QFrame(self.page_6)
-        self.frame_18.setObjectName(u"frame_18")
-        self.frame_18.setFrameShape(QFrame.StyledPanel)
-        self.frame_18.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_18 = QHBoxLayout(self.frame_18)
+        self.titleListGames = QFrame(self.page_6)
+        self.titleListGames.setObjectName(u"titleListGames")
+        self.titleListGames.setFrameShape(QFrame.StyledPanel)
+        self.titleListGames.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_18 = QHBoxLayout(self.titleListGames)
         self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
-        self.label_10 = QLabel(self.frame_18)
+        self.label_10 = QLabel(self.titleListGames)
         self.label_10.setObjectName(u"label_10")
         sizePolicy4.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
         self.label_10.setSizePolicy(sizePolicy4)
@@ -623,7 +628,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_18.addWidget(self.label_10)
 
-        self.searchBtn = QPushButton(self.frame_18)
+        self.searchBtn = QPushButton(self.titleListGames)
         self.searchBtn.setObjectName(u"searchBtn")
         icon14 = QIcon()
         icon14.addFile(u":/icons/icons/search.svg", QSize(), QIcon.Normal, QIcon.Off)
@@ -633,7 +638,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_18.addWidget(self.searchBtn, 0, Qt.AlignRight)
 
 
-        self.verticalLayout_15.addWidget(self.frame_18)
+        self.verticalLayout_15.addWidget(self.titleListGames)
 
         self.frame_12 = QFrame(self.page_6)
         self.frame_12.setObjectName(u"frame_12")
@@ -677,13 +682,13 @@ class Ui_MainWindow(object):
         self.page_7.setMaximumSize(QSize(16777215, 16777215))
         self.verticalLayout_16 = QVBoxLayout(self.page_7)
         self.verticalLayout_16.setObjectName(u"verticalLayout_16")
-        self.label_11 = QLabel(self.page_7)
-        self.label_11.setObjectName(u"label_11")
-        self.label_11.setMinimumSize(QSize(700, 0))
-        self.label_11.setFont(font)
-        self.label_11.setAlignment(Qt.AlignCenter)
+        self.titleResults = QLabel(self.page_7)
+        self.titleResults.setObjectName(u"titleResults")
+        self.titleResults.setMinimumSize(QSize(700, 0))
+        self.titleResults.setFont(font)
+        self.titleResults.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_16.addWidget(self.label_11, 0, Qt.AlignTop)
+        self.verticalLayout_16.addWidget(self.titleResults, 0, Qt.AlignTop)
 
         self.frame_11 = QFrame(self.page_7)
         self.frame_11.setObjectName(u"frame_11")
@@ -738,12 +743,12 @@ class Ui_MainWindow(object):
         self.page_8.setObjectName(u"page_8")
         self.verticalLayout_17 = QVBoxLayout(self.page_8)
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
-        self.label_12 = QLabel(self.page_8)
-        self.label_12.setObjectName(u"label_12")
-        self.label_12.setFont(font)
-        self.label_12.setAlignment(Qt.AlignCenter)
+        self.titleAddResults = QLabel(self.page_8)
+        self.titleAddResults.setObjectName(u"titleAddResults")
+        self.titleAddResults.setFont(font)
+        self.titleAddResults.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_17.addWidget(self.label_12, 0, Qt.AlignTop)
+        self.verticalLayout_17.addWidget(self.titleAddResults, 0, Qt.AlignTop)
 
         self.frame_13 = QFrame(self.page_8)
         self.frame_13.setObjectName(u"frame_13")
@@ -751,6 +756,84 @@ class Ui_MainWindow(object):
         self.frame_13.setSizePolicy(sizePolicy1)
         self.frame_13.setFrameShape(QFrame.StyledPanel)
         self.frame_13.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_28 = QVBoxLayout(self.frame_13)
+        self.verticalLayout_28.setSpacing(0)
+        self.verticalLayout_28.setObjectName(u"verticalLayout_28")
+        self.verticalLayout_28.setContentsMargins(0, 0, 0, 10)
+        self.formLayout_3 = QFormLayout()
+        self.formLayout_3.setObjectName(u"formLayout_3")
+        self.formLayout_3.setHorizontalSpacing(6)
+        self.formLayout_3.setVerticalSpacing(6)
+        self.formLayout_3.setContentsMargins(10, 10, 10, 10)
+        self.label_33 = QLabel(self.frame_13)
+        self.label_33.setObjectName(u"label_33")
+        font6 = QFont()
+        font6.setPointSize(14)
+        self.label_33.setFont(font6)
+
+        self.formLayout_3.setWidget(0, QFormLayout.LabelRole, self.label_33)
+
+        self.dateEdit = QDateEdit(self.frame_13)
+        self.dateEdit.setObjectName(u"dateEdit")
+        self.dateEdit.setFont(font6)
+
+        self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.dateEdit)
+
+        self.label_30 = QLabel(self.frame_13)
+        self.label_30.setObjectName(u"label_30")
+        self.label_30.setFont(font6)
+
+        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.label_30)
+
+        self.valuePlayer = QLineEdit(self.frame_13)
+        self.valuePlayer.setObjectName(u"valuePlayer")
+        self.valuePlayer.setFont(font6)
+
+        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.valuePlayer)
+
+        self.label_32 = QLabel(self.frame_13)
+        self.label_32.setObjectName(u"label_32")
+        self.label_32.setFont(font6)
+
+        self.formLayout_3.setWidget(2, QFormLayout.LabelRole, self.label_32)
+
+        self.nameGameAdd = QComboBox(self.frame_13)
+        self.nameGameAdd.setObjectName(u"nameGameAdd")
+        self.nameGameAdd.setFont(font6)
+
+        self.formLayout_3.setWidget(2, QFormLayout.FieldRole, self.nameGameAdd)
+
+        self.label_31 = QLabel(self.frame_13)
+        self.label_31.setObjectName(u"label_31")
+        self.label_31.setFont(font6)
+
+        self.formLayout_3.setWidget(3, QFormLayout.LabelRole, self.label_31)
+
+        self.numberGame = QLineEdit(self.frame_13)
+        self.numberGame.setObjectName(u"numberGame")
+        self.numberGame.setFont(font6)
+
+        self.formLayout_3.setWidget(3, QFormLayout.FieldRole, self.numberGame)
+
+
+        self.verticalLayout_28.addLayout(self.formLayout_3)
+
+        self.addPlayer = QPushButton(self.frame_13)
+        self.addPlayer.setObjectName(u"addPlayer")
+        sizePolicy5 = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Minimum)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.addPlayer.sizePolicy().hasHeightForWidth())
+        self.addPlayer.setSizePolicy(sizePolicy5)
+        self.addPlayer.setMinimumSize(QSize(200, 0))
+        self.addPlayer.setFont(font3)
+
+        self.verticalLayout_28.addWidget(self.addPlayer, 0, Qt.AlignHCenter)
+
+        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_28.addItem(self.verticalSpacer_4)
+
 
         self.verticalLayout_17.addWidget(self.frame_13)
 
@@ -800,6 +883,76 @@ class Ui_MainWindow(object):
 
         self.rightMenuPages = QCustomStackedWidget(self.rightMenuSubContainer)
         self.rightMenuPages.setObjectName(u"rightMenuPages")
+        self.page_11 = QWidget()
+        self.page_11.setObjectName(u"page_11")
+        self.verticalLayout_26 = QVBoxLayout(self.page_11)
+        self.verticalLayout_26.setObjectName(u"verticalLayout_26")
+        self.frame_18 = QFrame(self.page_11)
+        self.frame_18.setObjectName(u"frame_18")
+        self.frame_18.setFrameShape(QFrame.StyledPanel)
+        self.frame_18.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_27 = QVBoxLayout(self.frame_18)
+        self.verticalLayout_27.setObjectName(u"verticalLayout_27")
+        self.verticalLayout_27.setContentsMargins(0, 0, 0, 10)
+        self.formLayout_4 = QFormLayout()
+        self.formLayout_4.setObjectName(u"formLayout_4")
+        self.label_11 = QLabel(self.frame_18)
+        self.label_11.setObjectName(u"label_11")
+
+        self.formLayout_4.setWidget(0, QFormLayout.LabelRole, self.label_11)
+
+        self.position = QLineEdit(self.frame_18)
+        self.position.setObjectName(u"position")
+
+        self.formLayout_4.setWidget(0, QFormLayout.FieldRole, self.position)
+
+        self.label_12 = QLabel(self.frame_18)
+        self.label_12.setObjectName(u"label_12")
+
+        self.formLayout_4.setWidget(1, QFormLayout.LabelRole, self.label_12)
+
+        self.namePlayer = QComboBox(self.frame_18)
+        self.namePlayer.setObjectName(u"namePlayer")
+
+        self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.namePlayer)
+
+        self.label_34 = QLabel(self.frame_18)
+        self.label_34.setObjectName(u"label_34")
+
+        self.formLayout_4.setWidget(2, QFormLayout.LabelRole, self.label_34)
+
+        self.points = QLineEdit(self.frame_18)
+        self.points.setObjectName(u"points")
+
+        self.formLayout_4.setWidget(2, QFormLayout.FieldRole, self.points)
+
+        self.label_35 = QLabel(self.frame_18)
+        self.label_35.setObjectName(u"label_35")
+
+        self.formLayout_4.setWidget(3, QFormLayout.LabelRole, self.label_35)
+
+        self.results = QComboBox(self.frame_18)
+        self.results.setObjectName(u"results")
+
+        self.formLayout_4.setWidget(3, QFormLayout.FieldRole, self.results)
+
+
+        self.verticalLayout_27.addLayout(self.formLayout_4)
+
+        self.nextPlayer = QPushButton(self.frame_18)
+        self.nextPlayer.setObjectName(u"nextPlayer")
+        self.nextPlayer.setFont(font3)
+
+        self.verticalLayout_27.addWidget(self.nextPlayer)
+
+        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout_27.addItem(self.verticalSpacer_5)
+
+
+        self.verticalLayout_26.addWidget(self.frame_18)
+
+        self.rightMenuPages.addWidget(self.page_11)
         self.page_10 = QWidget()
         self.page_10.setObjectName(u"page_10")
         self.horizontalLayout_19 = QHBoxLayout(self.page_10)
@@ -858,8 +1011,6 @@ class Ui_MainWindow(object):
 
         self.searchItem = QPushButton(self.frame_19)
         self.searchItem.setObjectName(u"searchItem")
-        font6 = QFont()
-        font6.setPointSize(14)
         self.searchItem.setFont(font6)
 
         self.verticalLayout_24.addWidget(self.searchItem)
@@ -1125,7 +1276,7 @@ class Ui_MainWindow(object):
 
         self.centerMenuPages.setCurrentIndex(0)
         self.mainPages.setCurrentIndex(0)
-        self.rightMenuPages.setCurrentIndex(1)
+        self.rightMenuPages.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1201,7 +1352,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.closeBtn.setText("")
         self.label_22.setText("")
-        self.label_10.setText(QCoreApplication.translate("MainWindow", u"Lista Gier Planszowych", None))
+        self.label_10.setText(QCoreApplication.translate("MainWindow", u"          Lista Gier Planszowych", None))
         self.searchBtn.setText("")
         ___qtablewidgetitem = self.gameTablet.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Nazwa Gry", None));
@@ -1215,7 +1366,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Czas Gry", None));
         ___qtablewidgetitem5 = self.gameTablet.horizontalHeaderItem(5)
         ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"W\u0142a\u015bciciel", None));
-        self.label_11.setText(QCoreApplication.translate("MainWindow", u"Wyniki", None))
+        self.titleResults.setText(QCoreApplication.translate("MainWindow", u"Wyniki", None))
         ___qtablewidgetitem6 = self.winnerTable.horizontalHeaderItem(0)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Pozycja", None));
         ___qtablewidgetitem7 = self.winnerTable.horizontalHeaderItem(1)
@@ -1228,12 +1379,22 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"Osoba", None));
         ___qtablewidgetitem11 = self.goldPlateTable.horizontalHeaderItem(2)
         ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"Zmywanie", None));
-        self.label_12.setText(QCoreApplication.translate("MainWindow", u"Dodaj Wynik", None))
+        self.titleAddResults.setText(QCoreApplication.translate("MainWindow", u"Dodaj Wynik", None))
+        self.label_33.setText(QCoreApplication.translate("MainWindow", u"Data rozgrywki[d/m/r]:", None))
+        self.label_30.setText(QCoreApplication.translate("MainWindow", u"Ilo\u015b\u0107 graczy:", None))
+        self.label_32.setText(QCoreApplication.translate("MainWindow", u"Nazwa Gry", None))
+        self.label_31.setText(QCoreApplication.translate("MainWindow", u"Numer rozgrywki", None))
+        self.addPlayer.setText(QCoreApplication.translate("MainWindow", u"Dodaj Gracza", None))
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"Right Menu", None))
 #if QT_CONFIG(tooltip)
         self.closeRightBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close Menu", None))
 #endif // QT_CONFIG(tooltip)
         self.closeRightBtn.setText("")
+        self.label_11.setText(QCoreApplication.translate("MainWindow", u"Miejsce:", None))
+        self.label_12.setText(QCoreApplication.translate("MainWindow", u"Nazwa Gracza", None))
+        self.label_34.setText(QCoreApplication.translate("MainWindow", u"Punkty", None))
+        self.label_35.setText(QCoreApplication.translate("MainWindow", u"Rezultat", None))
+        self.nextPlayer.setText(QCoreApplication.translate("MainWindow", u"Nast\u0119pny Gracz", None))
         self.label_13.setText(QCoreApplication.translate("MainWindow", u"Wyszukiwanie", None))
         self.radioButton.setText(QCoreApplication.translate("MainWindow", u"Nazwa Gry", None))
         self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"W\u0142a\u015bciciel", None))

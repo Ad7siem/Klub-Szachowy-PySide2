@@ -236,7 +236,8 @@
 						{
 							"moreMenuBtn": "page_5",
 							"profileManuBtn": "page_4",
-							"searchBtn": "page_10"
+							"searchBtn": "page_10",
+							"addPlayer":"page_11"
 						}
 					]
 				}
