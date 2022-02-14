@@ -134,7 +134,7 @@ class MainWindow(QMainWindow):
 		self.typeGame.addItems(typeGameList)
 
 		# Combobox Types of Results
-		resultsList = ["Zwyciężca", "Przegrany", "Zmywacz"]
+		resultsList = ["Wygrana", "Przegrana", "Zmywanie"]
 		self.results.addItems(resultsList)
 
 		# Open Database and bulding records from list players and list games
@@ -502,7 +502,7 @@ class MainWindow(QMainWindow):
 	# 
 	##############################################################################################
 	def addPlayers(self):
-		pass
+		self.addResults = []
 
 	##############################################################################################
 	# 
@@ -510,22 +510,61 @@ class MainWindow(QMainWindow):
 	def nextPlayers(self):
 		temporary = []
 
-		print(self.dateEdit.text())
-		# print(self.nameGameAdd.text())
-		print(self.numberGame.text())
-		print(self.valuePlayer.text())
-		# print(self.namePlayer.text())
-		# print(self.results.text())
-		print(self.points.text())
-		print(self.position.text())
-		# self.nameGameAdd 
-		# self.numberGame 
-		# self.valuePlayer 
-		# self.dateEdit 
-		# self.namePlayer 
-		# self.results
-		# self.points 
-		# self.position 
+		###
+		# ----------------------
+		if self.results.currentText() == "Wygrana": #, "Przegrana", "Zmywanie"
+			pointLoser = '-1'
+		elif self.results.currentText() == "Przegrana":
+			pointLoser = '0'
+		elif self.results.currentText() == "Zmywanie":
+			pointLoser = '1'
+		else:
+			print("błąd - zmienna wartości zmywania")
+
+		# ----------------------
+		pointResult = int(self.valuePlayer.text()) - int(self.position.text()) + 1
+
+		# Open Database
+		conn = sqlite3.connect('listGames.db')
+		c = conn.cursor()
+
+		c.execute("SELECT * FROM list_players")
+		records = c.fetchall()
+
+		# ----------------------
+		for record in records:
+			# print(record)
+			if record[0] == self.namePlayer.currentText():
+				id_player = record[1]
+
+		c.execute("SELECT * FROM list_games_id")
+		records = c.fetchall()
+
+		# ----------------------
+		for record in records:
+			# print(record)
+			if record[0] == self.nameGameAdd.currentText():
+				id_game = record[1]
+
+		conn.commit()
+		conn.close()
+
+		###
+		temporary = [f'{self.numberGame.text()}', 
+						f'{id_game}', # ID Gry
+						f'{self.nameGameAdd.currentText()}', 
+						f'{id_player}',  # ID Gracza
+						f'{self.position.text()}', 
+						f'{self.namePlayer.currentText()}', 
+						f'{self.points.text()}', 
+						f'{str(pointResult)}', # rywalizacja
+						f'{pointLoser}', # zmywanie
+						f'{self.results.currentText()}',
+						f'{self.dateEdit.text()}']
+
+		self.addResults.append(temporary)
+		print(self.addResults)
+
 
 	##############################################################################################
 
