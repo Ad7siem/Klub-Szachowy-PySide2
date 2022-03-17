@@ -1,3 +1,4 @@
+# Import Libraris File PySide2 App
 from interface import *
 from configparser import ConfigParser
 import os, sys
@@ -6,9 +7,14 @@ import sqlite3
 
 from Custom_Widgets.Widgets import *
 
+##############################################################################################
+##################################### BUILDING DATABASE ######################################
+##############################################################################################
+# Open Database File
 conn = sqlite3.connect('listGames.db')
 c = conn.cursor()
 
+# Create Table
 c.execute("""CREATE TABLE if not exists list_games(
 	lp text,
 	name_game text,
@@ -38,8 +44,13 @@ c.execute("""CREATE TABLE if not exists list_games_id(
 	id int)
 	""")
 
+# Close Database
 conn.commit()
 conn.close()
+
+temporary_player_list = []
+
+##############################################################################################
 
 class MainWindow(QMainWindow):
 	def __init__(self, parent=None):
@@ -49,7 +60,7 @@ class MainWindow(QMainWindow):
 		loadJsonStyle(self, self.ui)
 
 		##############################################################################################
-		###################################### OPEN FILE *.INI ######################################
+		###################################### OPEN FILE *.INI #######################################
 		##############################################################################################
 		parser = ConfigParser()
 		parser.read('main.ini')
@@ -126,6 +137,11 @@ class MainWindow(QMainWindow):
 		self.points = self.findChild(QLineEdit, 'points')
 		self.position = self.findChild(QLineEdit, 'position')
 
+		# Add Board Game
+		self.saveGameBtn = self.findChild(QPushButton, 'saveGame')
+
+		# Settings Game Table
+		self.gameTablet = self.findChild(QTableWidget, 'gameTablet')
 		##############################################################################################
 		################################### BUILDING LIST COMBOBOX ###################################
 		##############################################################################################
@@ -190,7 +206,6 @@ class MainWindow(QMainWindow):
 		##############################################################################################
 		###################################### ADD BOARD GAMES #######################################
 		##############################################################################################
-		self.saveGameBtn = self.findChild(QPushButton, 'saveGame')
 		self.saveGameBtn.clicked.connect(self.saveGame)
 
 		##############################################################################################
@@ -243,18 +258,14 @@ class MainWindow(QMainWindow):
 		c.execute("SELECT * FROM list_games")
 		records = c.fetchall()
 
-		for x in range(len(records)):
-			if x > 0:
-				# print(records[x])
-				self.insertNewGameTableRow(records[x][1:7])
+		for x in range(1, len(records)):
+			self.insertNewGameTableRow(records[x][1:7])
 
 		# Show List Player Winners From Database
 		c.execute("SELECT * FROM list_winners")
 		records = c.fetchall()
 
 		for record in records[3:]:
-			# if x > 2:
-				# print(records[x])
 			self.insertNewWinnerTableRow(record)
 
 		# Show List Players Lossers From Database
@@ -262,17 +273,15 @@ class MainWindow(QMainWindow):
 		records = c.fetchall()
 
 		for record in records[3:]:
-			if x > 2:
-				self.insertNewGoldPlateTableRow(record)
+			self.insertNewGoldPlateTableRow(record)
 
 		# Close Database
 		conn.commit()
 		conn.close()
 
 		##############################################################################################
-		#################################### SETTINGS GAMES TABLET ###################################
+		#################################### SETTINGS GAMES TABLE ####################################
 		##############################################################################################
-		self.gameTablet = self.findChild(QTableWidget, 'gameTablet')
 		self.gameTablet.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
 		self.gameTablet.resizeColumnsToContents()
 
@@ -293,8 +302,7 @@ class MainWindow(QMainWindow):
 			qtablewidgetitem = QTableWidgetItem()
 			self.ui.winnerTable.setItem(rowPosition, x, qtablewidgetitem)
 
-			qtablewidgetitem = self.ui.winnerTable.item(rowPosition, x)
-			# print(qtablewidgetitem)
+			# qtablewidgetitem = self.ui.winnerTable.item(rowPosition, x)
 			qtablewidgetitem.setText(str(items[x]))
 
 	# Table Losers
@@ -307,11 +315,9 @@ class MainWindow(QMainWindow):
 			if items[1] == '':
 				break
 			qtablewidgetitem = QTableWidgetItem()
-			# print(rowPosition, x, items[1])
 			self.ui.goldPlateTable.setItem(rowPosition, x, qtablewidgetitem)
 
-			qtablewidgetitem = self.ui.goldPlateTable.item(rowPosition, x)
-			# print(qtablewidgetitem)
+			# qtablewidgetitem = self.ui.goldPlateTable.item(rowPosition, x)
 			qtablewidgetitem.setText(str(items[x]))
 
 	# Table All Games All Players
@@ -322,15 +328,11 @@ class MainWindow(QMainWindow):
 
 		# Insert row values
 		for x in range(len(items)):
-			# print(str(items[x]))
 			# Create Widget
 			qtablewidgetitem = QTableWidgetItem()
-			# print(qtablewidgetitem.setText(str(x)))
-			# print(rowPosition, x)
 			self.ui.gameTablet.setItem(rowPosition, x, qtablewidgetitem)
 			# Add item
-			qtablewidgetitem = self.ui.gameTablet.item(rowPosition, x)
-			# print(qtablewidgetitem)
+			# qtablewidgetitem = self.ui.gameTablet.item(rowPosition, x) # możliwe, że nie musze tego robić
 			if qtablewidgetitem == None:
 				continue
 			qtablewidgetitem.setText(str(items[x]))
@@ -356,19 +358,18 @@ class MainWindow(QMainWindow):
 		elif self.typeGame.currentText() == "Dodatek":
 			typeG = 'D'
 
+		worksheet_game = self.openSheet(self.sheet_all_boardgames, self.sheet_file_boardgames)
+
 		newGame = []
-		newGame.append(int(len(self.worksheet_game.get_all_values())))
+		newGame.append(int(len(worksheet_game.get_all_values())))
 		newGame.append(self.nameGame.text())
 		newGame.append(typeG)
 		newGame.append(int(self.minPlayer.text()))
 		newGame.append(int(self.maxPlayer.text()))
 		newGame.append(int(self.timeGame.text()))
 		newGame.append(self.owner.text())
-		# newGame2 = [f'{self.nameGame.text()}', f'{self.typeGame.text()}', f'{self.minPlayer.text()}', f'{self.maxPlayer.text()}', f'{self.timeGame.text()}', f'{self.owner.text()}']
-		# print(newGame)
-		# print(newGame2)
 
-		self.worksheet_game.append_row(newGame)
+		worksheet_game.append_row(newGame)
 		self.infoNotification.setText(f'Gra "{self.nameGame.text()}" została zapisana!')
 
 	##############################################################################################
@@ -395,7 +396,6 @@ class MainWindow(QMainWindow):
 	# FUNCTION UPDATING THE DATABASE FROM GOOGLE SHEET
 	##############################################################################################
 	def dataUpdate(self):
-		self.infoNotification.setText('Zaaktualizowano bazę danych')
 
 		### Downloading data from google sheet ###
 		worksheet_game = self.openSheet(self.sheet_all_boardgames, self.sheet_file_boardgames)
@@ -428,63 +428,45 @@ class MainWindow(QMainWindow):
 		for record in records_games:
 			# print(record)
 			# print(res[r][0:7])
-			temporary_lp = record[0]
-			temporary_name_game = record[1]
-			temporary_type = record[2]
-			temporary_min_players = record[3]
-			temporary_max_players = record[4]
-			temporary_time_game = record[5]
-			temporary_owner = record[6]
 			c.execute("INSERT INTO list_games VALUES (:lp, :name_game, :type, :min_players, :max_players, :time_game, :owner)",
 				{
-					'lp': temporary_lp,
-					'name_game': temporary_name_game,
-					'type': temporary_type,
-					'min_players': temporary_min_players,
-					'max_players': temporary_max_players,
-					'time_game': temporary_time_game,
-					'owner': temporary_owner,
+					'lp': record[0],
+					'name_game': record[1],
+					'type': record[2],
+					'min_players': record[3],
+					'max_players': record[4],
+					'time_game': record[5],
+					'owner': record[6],
 				})
 
 		# Saving data to list_winners in a database
 		for record in records_table_winners:
-			temporary_position_winners = record[1]
-			temporary_name_player_winners = record[2]
-			temporary_points = record[3]
-			temporary_position_plate = record[5]
-			temporary_name_player_plate = record[6]
-			temporary_losers = record[7]
 			c.execute("INSERT INTO list_winners VALUES(:position, :name_player, :points)",
 				{
-					'position': temporary_position_winners,
-					'name_player': temporary_name_player_winners,
-					'points': temporary_points
+					'position': record[1],
+					'name_player': record[2],
+					'points': record[3]
 				})
 			c.execute("INSERT INTO list_gold_plate VALUES(:position, :name_player, :percentage_of_losers)",
 				{
-					'position': temporary_position_plate,
-					'name_player': temporary_name_player_plate,
-					'percentage_of_losers': temporary_losers
+					'position': record[5],
+					'name_player': record[6],
+					'percentage_of_losers': record[7]
 				})
 		
 		# Saving data to list_players in a database
 		for record in records_players_list:
-			temporary_player = record[0]
-			temporary_id = record[2]
 			c.execute("INSERT INTO list_players VALUES(:name_player, :id)",
 				{
-					'name_player': temporary_player,
-					'id': temporary_id
+					'name_player': record[0],
+					'id': record[2]
 				})
-
 		# Saving data to list_games_id in a database
 		for record in records_games_list:
-			temporary_name_game = record[0]
-			temporary_id = record[1]
 			c.execute("INSERT INTO list_games_id VALUES(:name_game, :id)",
 				{
-					'name_game': temporary_name_game,
-					'id': temporary_id
+					'name_game': record[0],
+					'id': record[1]
 				})
 
 		# c.execute("SELECT * FROM list_players")
@@ -497,73 +479,143 @@ class MainWindow(QMainWindow):
 		# for record in records:
 		# 	print(record)
 
+		self.infoNotification.setText('Zaaktualizowano bazę danych')
 
 	##############################################################################################
 	# 
 	##############################################################################################
 	def addPlayers(self):
 		self.addResults = []
+		self.sumPlayer = 0
+		self.position.setText("1")
+
+
+		self.nameGameAdd.setDisabled(True)
+		self.dateEdit.setDisabled(True)
+		self.numberGame.setDisabled(True)
+		self.valuePlayer.setDisabled(True)
 
 	##############################################################################################
 	# 
 	##############################################################################################
 	def nextPlayers(self):
+		if self.sumPlayer == int(self.valuePlayer.text()):
+			worksheet = self.openSheet(self.sheet_results, self.sheet_file_results)
+			records = worksheet.get_all_values()
+
+			for record in records:
+				if record[0] == '':
+					worksheet.update(f'A{records.index(record)+1}:K{(records.index(record)+len(self.addResults))+1}', self.addResults)
+					# print(records.index(record))
+					# print(len(self.addResults))
+					break
+				# print(record)
+
+			# for record in self.addResults:
+			# 	# worksheet.append_row(record)
+			# 	print(record)
+			# print(self.addResults)
+			# print(self.sumPlayer)
+			# print(self.namePlayer.currentText())
+			self.namePlayer.addItems(temporary_player_list)
+
+			self.nameGameAdd.setDisabled(False)
+			self.dateEdit.setDisabled(False)
+			self.numberGame.setDisabled(False)
+			self.valuePlayer.setDisabled(False)
+			self.position.setDisabled(False)
+			self.points.setDisabled(False)
+			self.namePlayer.setDisabled(False)
+			self.results.setDisabled(False)
+
+			self.ui.rightMenuContainer.collapseMenu()
+
 		temporary = []
+
+
 
 		###
 		# ----------------------
 		if self.results.currentText() == "Wygrana": #, "Przegrana", "Zmywanie"
 			pointLoser = '-1'
+			text = 'Wygrana'
 		elif self.results.currentText() == "Przegrana":
 			pointLoser = '0'
+			text = 'Przegrana'
 		elif self.results.currentText() == "Zmywanie":
 			pointLoser = '1'
+			text = 'Przegrana'
 		else:
 			print("błąd - zmienna wartości zmywania")
 
 		# ----------------------
 		pointResult = int(self.valuePlayer.text()) - int(self.position.text()) + 1
 
+
+
 		# Open Database
 		conn = sqlite3.connect('listGames.db')
 		c = conn.cursor()
 
-		c.execute("SELECT * FROM list_players")
+		# ----------------------
+		c.execute('SELECT * FROM list_players WHERE name_player=?', (self.namePlayer.currentText(),))
 		records = c.fetchall()
+		id_player = records[0][1]
 
 		# ----------------------
-		for record in records:
-			# print(record)
-			if record[0] == self.namePlayer.currentText():
-				id_player = record[1]
-
-		c.execute("SELECT * FROM list_games_id")
+		c.execute('SELECT * FROM list_games_id WHERE name_game=?', (self.nameGameAdd.currentText(),))
 		records = c.fetchall()
-
-		# ----------------------
-		for record in records:
-			# print(record)
-			if record[0] == self.nameGameAdd.currentText():
-				id_game = record[1]
+		id_game = records[0][1]
 
 		conn.commit()
 		conn.close()
 
 		###
-		temporary = [f'{self.numberGame.text()}', 
-						f'{id_game}', # ID Gry
+		temporary = [int(f'{self.numberGame.text()}'), 
+						int(f'{id_game}'), # ID Gry
 						f'{self.nameGameAdd.currentText()}', 
-						f'{id_player}',  # ID Gracza
-						f'{self.position.text()}', 
+						int(f'{id_player}'),  # ID Gracza
+						int(f'{self.position.text()}'), 
 						f'{self.namePlayer.currentText()}', 
-						f'{self.points.text()}', 
-						f'{str(pointResult)}', # rywalizacja
-						f'{pointLoser}', # zmywanie
-						f'{self.results.currentText()}',
+						int(f'{self.points.text()}'), 
+						int(f'{pointResult}'), # rywalizacja
+						int(f'{pointLoser}'), # zmywanie
+						text,#f'{self.results.currentText()}',
 						f'{self.dateEdit.text()}']
 
 		self.addResults.append(temporary)
-		print(self.addResults)
+		self.sumPlayer += 1
+
+		# self.namePlayer.removeItem(self.namePlayer.currentIndex())
+		
+		if self.sumPlayer < int(self.valuePlayer.text()):
+			self.position.setText(str(int(self.position.text()) + 1))
+			self.points.setText("")
+
+		if self.sumPlayer <= int(self.valuePlayer.text()):
+			#####
+			temporary_player_list.append(self.namePlayer.currentText())
+			# print(temporary_player_list)
+			self.namePlayer.removeItem(self.namePlayer.currentIndex())
+			#####
+
+
+
+		if int(self.sumPlayer) == int(self.valuePlayer.text()) - 1:
+			self.nextPlayerBtn.setText('Ostatni')
+		elif self.sumPlayer == int(self.valuePlayer.text()):
+
+			# self.position.setText("")
+			# self.points.setText(" ")
+			# self.namePlayer.setCurrentText("")
+			# self.results.setCurrentText("")
+
+			self.position.setDisabled(True)
+			self.points.setDisabled(True)
+			self.namePlayer.setDisabled(True)
+			self.results.setDisabled(True)
+			self.nextPlayerBtn.setText('Zakończ')	
+
 
 
 	##############################################################################################
