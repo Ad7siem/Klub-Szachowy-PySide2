@@ -423,6 +423,7 @@ class MainWindow(QMainWindow):
 		c.execute("DELETE FROM list_winners;")
 		c.execute("DELETE FROM list_gold_plate;")
 		c.execute("DELETE FROM list_players;")
+		c.execute("DELETE FROM list_games_id")
 
 		# Saving data to list_games in a database
 		for record in records_games:
